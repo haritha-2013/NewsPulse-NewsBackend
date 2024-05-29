@@ -6,16 +6,16 @@ const router = express.Router()
 router.get('/', getAllArticles)
 
 //2. Get an article byId
-router.get('/:articleById',getArticleById)
+router.get('/:articleId',getArticleById)
 
 //3. Add a new article
 router.post('/' , addNewArticle)
 
 //4. Update an article 
-router.patch('/:articleById',updateArticle)
+router.patch('/:articleId',updateArticle)
 
 //5. Delete an article
-router.delete('/:articleById', deleteArticle)
+router.delete('/:articleId', deleteArticle)
 
 
 module.exports = router
