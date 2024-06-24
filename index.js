@@ -1,5 +1,9 @@
+require('dotenv').config()
+
+
 const mongoose = require('mongoose');
 const express = require('express')
+
 const articleRoutes = require('./routes/articleRoutes')
 const authorRoutes = require('./routes/authorRoutes')
 const app = express()
@@ -21,5 +25,5 @@ app.listen(port, () => {
 main().then(() => console.log("connected")).catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb+srv://harithaabhilash2013:MUyFvtAHW1drKQym@cluster0.lwnddes.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+  await mongoose.connect(process.env.DB_URL);
 }
