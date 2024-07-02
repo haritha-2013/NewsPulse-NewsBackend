@@ -1,22 +1,47 @@
+const Author = require('../models/authorModels')
 
-const getAllAuthors = (req,res)=>{
-    res.send('Not written')
+const getAllAuthors = async(req,res)=>{
+    //.1. Find all authors
+    const authors = await Author.find({});
+    
+     res.json(authors)
 }
 
-const getAuthorById = (req,res)=>{
-    res.send('Not written')
+const getAuthorById = async(req,res)=>{
+    //.1. Find author by ID
+    const author = await Author.findById(req.params.authorId)  
+        res.json(author)
 }
 
-const addNewAuthor = (req,res)=>{
-    res.send('Not written')
+
+
+
+const addNewAuthor = async (req,res)=>{
+
+    //.1. Create a document using authorSchema
+    const author = new Author(req.body)
+   
+
+    //.2. Save the document to the database
+    await author.save()
+    
+   res.json(author)}
+
+
+const updateAuthor = async(req,res)=>{
+    //.1. Update author by ID
+const updatedAuthor = await Author.findByIdAndUpdate(req.params.authorId, req.body,{new: true})
+    res.json(updatedAuthor)
 }
 
-const updateAuthor = (req,res)=>{
-    res.send('Not written')
+const deleteAuthor = async (req,res)=>{
+
+    const deletedAuthor = await Author.findByIdAndDelete(req.params.authorId) 
+    res.json(deletedAuthor)
 }
 
-const deleteAuthor = (req,res)=>{
-    res.send('Not written')
-}
-
-module.exports = {getAllAuthors,getAuthorById,addNewAuthor,updateAuthor,deleteAuthor}
+module.exports = {getAllAuthors,
+    getAuthorById,
+    addNewAuthor,
+    updateAuthor,
+    deleteAuthor}

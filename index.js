@@ -3,15 +3,18 @@ require('dotenv').config()
 
 const mongoose = require('mongoose');
 const express = require('express')
-
+const cors = require('cors')
 const articleRoutes = require('./routes/articleRoutes')
 const authorRoutes = require('./routes/authorRoutes')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000;
+app.use(express.json());
+
+app.use(cors())
 
 app.use('/articles', articleRoutes)
 
-app.use('/author', authorRoutes)
+app.use('/authors', authorRoutes)
 
 
 
