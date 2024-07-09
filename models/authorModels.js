@@ -2,11 +2,10 @@ const mongoose = require('mongoose');
 
 //.1.Schema
 const authorSchema = new mongoose.Schema({
-    name: String,
-    place: String,
-    language: String,
-    description: String,
-    thumbnail: String
+  image: String,  
+  name: String,
+  bio: String
+    
 
   });
 
@@ -18,4 +17,4 @@ const authorSchema = new mongoose.Schema({
 
 const Author = mongoose.model('Author', authorSchema);
 
-module.exports = Author
+module.exports = Author;

@@ -1,5 +1,9 @@
 const express = require('express')
-const { getAllArticles, getArticleById, addNewArticle, updateAuthor, deleteAuthor, updateArticle, deleteArticle } = require('../controllers/articlesControllers')
+const { getAllArticles, 
+        getArticleById, 
+        addNewArticle, 
+        updateArticle, 
+        deleteArticle } = require('../controllers/articleControllers')
 const router = express.Router()
 
 //1. Get all articles

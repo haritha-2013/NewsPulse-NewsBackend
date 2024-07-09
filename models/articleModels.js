@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 //.1.Schema
 const articleSchema = new mongoose.Schema({
-    name : String,
-    language : String,
-   articles: String
+   
+    title : String,
+   image: String,
+   description : String
     
 
   });
