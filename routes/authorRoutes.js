@@ -4,7 +4,9 @@ const { getAllAuthors,
         updateAuthor, 
         deleteAuthor, 
         addNewAuthor } = require('../controllers/authorControllers')
-const router = express.Router()
+
+
+ const router = express.Router()
 
 //1. Get all author
 router.get('/', getAllAuthors )

@@ -1,70 +1,98 @@
-const User = require("../Models/userSchema");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const User = require("../models/userModels");
+const bcrypt = require('bcrypt');
+const JWT_SECRET = process.env.JWT_SECRET ;
+const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = process.env.SECRET_KEY;
 
-const login = async (req, res) => {
-  const { userName, password } = req.body;
-
+const signup = async (req, res) => {
   try {
-    const user = await User.findOne({ userName: userName }).exec();
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
+    const { email, password } = req.body;
+
+    
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: 'User already exists' });
     }
 
-    const isMatch= await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid password" });
-    }
+ 
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const token = jwt.sign(
-      { _id: user._id, userName: user.userName },
-      SECRET_KEY, {expiresIn: "1hr"});
+  
+    user = new User({ email, password: hashedPassword });
+    await user.save();
 
-    res.cookie("token", token, {
+    const token = jwt.sign({ _id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+
+  
+    res.cookie('token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
+      sameSite: 'none' 
     });
-    return res.status(200).json({ message: "Login successful" });
+
+    res.status(201).json({ message: 'User created successfully', user });
   } catch (error) {
-    res.status(500).json({ message: "rout is working", error });
+    console.error('Error in signup:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-const logout = async (req, res) => {
-  try {
-    res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
-    res.status(200).send("Cleared cookie and logged out");
-  } catch {
-    res.status(401).send("something went wrong while deleting");
-  }
-};
 
-const verifyLogin = (req, res) => {
-  try {
-    if (req.cookies && req.cookies.token) {
-      const token = req.cookies.token;
+const Login = async(req,res) => {
 
-      jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-        if (err) {
-          res.status(401).json({ isLoggedIn: false, error: "Invalid token" });
-        } else {
-          res.json({ isLoggedIn: true, user: decoded });
-        }
-      });
+  //. 1. Get data from request body
+    const data = req.body
+  
+    //. 2. Check for user with given email in database
+   const user = await User.findOne({ email: data.email }).exec();
+
+   if (!user) {
+    return res.status(401).send('Invalid email or password');
+}
+
+
+  //. 3. Check password agaist password in database
+
+  const passwordMatch = bcrypt.compare (data.password, user.password) 
+    // result == true
+
+  //. 4. Login
+
+  if (passwordMatch) {
+    const token = jwt.sign({ _id: user._id, email: user.email }, 
+      JWT_SECRET , {expiresIn : "1h"});
+    
+      res.cookie('token', token, {
+         httpOnly: true ,
+        secure: true,
+        sameSite : "none"});
+      return res.send("Logged In");
     } else {
-      res.status(401).json({ isLoggedIn: false, error: "Token Not Exist" });
+      return res.status(401).send("Unauthorized access !!! Wrong password");
     }
-  } catch (error) {
-    console.error("Error verifying login:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
+  };
+  
+  const verify = async (req, res) => {
+    console.log(req.cookies);
+    res.json("Verified");
+  };
 
-module.exports = {
-  login,
-  verifyLogin,
-  logout,
-};
+  const verifyLogin = async (req, res) => {
+    console.log(req.cookies)
+    req.send("HelloWorld")
+  }
+
+  const logout = async (req, res) => {
+    res.cookie('token' , '' , {expires : new Date(0),
+      httpOnly: true 
+    })
+    res.send("Logged Out Successfully !!!")
+  }
+  
+  module.exports = {
+    signup,
+    Login,
+    verify,
+    verifyLogin,
+    logout
+  };

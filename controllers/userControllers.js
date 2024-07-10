@@ -1,81 +1,102 @@
-const User = require("../Models/userSchema");
-const bcrypt = require("bcrypt");
-const saltround = 10;
+const User = require("../models/userModels")
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
-// Get all users
-async function getAllUsers(req, res) {
+
+const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching users", error });
+    res.status(500).json({ message: error.message });
   }
 }
 
-// Get a single user by ID
-async function getUser(req, res) {
+
+const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
+
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching user", error });
+    res.status(500).json({ message: error.message });
   }
 }
 
-// Add a new user
-async function addUser(req, res) {
+  
+
+
+const addUser = async (req, res) => {
   try {
-    const hash = bcrypt.hashSync(req.body.password, saltround);
+// 1. Get data from request body
     const data = req.body;
 
-    const user = await User.create({ ...data, password: hash });
+    const password = req.body.password
+    const hash = bcrypt.hashSync(password, saltRounds);
+// Store hash in your password DB.
+
+    
+// 2. Create a new User document
+    const user = new User( {
+      ...data,
+      password: hash
+    });
+    
+// 3. Save the document to the database
+    await user.save();
+    
+    // 4. Send the saved document as a response
     res.status(201).json(user);
   } catch (error) {
-    res.status(400).json({ status: "fail", message: error.message });
+    res.status(400).json({ message: error.message });
   }
 }
 
-// Update an existing user
-async function updateUser(req, res) {
+const updateUser = async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.userId,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const userId = req.params.id;
+    const updates = req.body;
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+    // Find the user by id and update with new data
+    const user = await User.findByIdAndUpdate(userId, updates, { new: true, runValidators: true });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    res.json(updatedUser);
+
+    res.json(user);
   } catch (error) {
-    res.status(400).json({ message: "Error updating user", error });
+    res.status(400).json({ message: error.message });
   }
 }
 
-// Delete a user
-async function deleteUser(req, res) {
+const deleteUser = async (req, res) => {
   try {
-    const deletedUser = await User.findByIdAndDelete(req.params.userId);
-    if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
+    const userId = req.params.id;
+
+    // Find the user by id and delete
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    res.json({ message: "User deleted" });
+
+    res.json({ message: 'User deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting user", error });
+    res.status(400).json({ message: error.message });
   }
 }
+
 
 module.exports = {
   getAllUsers,
-  getUser,
+  getUserById,
   addUser,
   updateUser,
-  deleteUser,
-};
+  deleteUser
+}

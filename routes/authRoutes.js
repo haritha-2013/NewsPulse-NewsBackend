@@ -1,17 +1,19 @@
-const express = require("express");
-const router = express.Router();
-const { login, verifyLogin, logout } = require("../controllers/authController");
+const express = require('express')
+const { signup, Login, verify, logout } = require('../controllers/authControllers')
+const router = express.Router()
 
-const validateLogin = (req, res, next) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: "Username and password are required" });
-    }
-    next();
-  };
 
-router.post("/login", validation, login);
-router.get("/logout", logout);
-router.get("/verify", verifyLogin);
+//. 1. Route for signup
+router.post('/signup' , signup)
+
+//. 2. Route for Login
+router.post('/login' , Login);
+
+
+//.3. Route for verify
+router.get ('./verify' , verify);
+
+//.4. Route for logout
+router.get ('./logout' , logout)
 
 module.exports = router;
