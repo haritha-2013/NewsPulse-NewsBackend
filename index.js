@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+
 const articleRoutes = require('./routes/articleRoutes')
 const authorRoutes = require('./routes/authorRoutes')
 const userRoutes = require('./routes/userRoutes')
@@ -24,22 +25,24 @@ app.use(cors(
       
     
   }
-))
+));
 
 app.use(express.json());
 
 
 //. Read cookies 
 
-app.use(cookieParser())
+app.use(cookieParser());
 
-app.use('/articles', articleRoutes)
 
-app.use('/authors', authorRoutes)
 
-app.use ('/users' , userRoutes)
+app.use('/articles', articleRoutes);
 
-app.use ( '/auth' , authRoutes)
+app.use('/authors', authorRoutes);
+
+app.use ('/users' , userRoutes);
+
+app.use ( '/auth' , authRoutes);
 
 
 

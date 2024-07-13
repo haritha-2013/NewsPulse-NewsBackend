@@ -59,7 +59,8 @@ const Login = async(req,res) => {
   //. 4. Login
 
   if (passwordMatch) {
-    const token = jwt.sign({ _id: user._id, email: user.email }, 
+    const token = jwt.sign(
+      { _id: user._id, email: user.email }, 
       JWT_SECRET , {expiresIn : "1h"});
     
       res.cookie('token', token, {
@@ -71,28 +72,37 @@ const Login = async(req,res) => {
       return res.status(401).send("Unauthorized access !!! Wrong password");
     }
   };
-  
-  const verify = async (req, res) => {
-    console.log(req.cookies);
-    res.json("Verified");
-  };
 
-  const verifyLogin = async (req, res) => {
-    console.log(req.cookies)
-    req.send("HelloWorld")
-  }
+ 
 
   const logout = async (req, res) => {
-    res.cookie('token' , '' , {expires : new Date(0),
-      httpOnly: true 
+    res.cookie('token' , '' , 
+      {expires : new Date(0),
+      httpOnly: true ,
+      secure : true,
+      sameSite : 'none'
     })
     res.send("Logged Out Successfully !!!")
   }
+
+  const verifyLogin = async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).send("Unauthorized Access!");
+    }
+  
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      res.json({ message: "Logged In", user: decoded });
+    } catch (error) {
+      console.error('Error in verifying token:', error);
+      res.status(401).send("Unauthorized Access!");
+    }
+  };
   
   module.exports = {
     signup,
     Login,
-    verify,
     verifyLogin,
     logout
   };
