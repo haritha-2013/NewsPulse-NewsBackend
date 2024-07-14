@@ -31,9 +31,6 @@ app.use(express.json());
 //. Read cookies 
 app.use(cookieParser());
 
-//app.get('/', (req, res) => {
- // res.send('Hello World!');
-//});
 
 
 app.use('/articles', articleRoutes);
