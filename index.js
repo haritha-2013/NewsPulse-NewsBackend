@@ -1,57 +1,37 @@
-require('dotenv').config()
+require('dotenv').config();
 
+const mongoose = require('mongoose');
+const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
-import { connect } from 'mongoose';
-import express, { json } from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
+const articleRoutes = require('./routes/articleRoutes');
+const authorRoutes = require('./routes/authorRoutes');
+const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
 
-import articleRoutes from './routes/articleRoutes';
-import authorRoutes from './routes/authorRoutes';
-import userRoutes from './routes/userRoutes';
-import authRoutes from './routes/authRoutes';
-
-const app = express()
+const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors({
+  credentials: true,
+  origin: "http://localhost:5173",
+}));
 
-
-
-
-app.use(cors(
-  {
-    credentials: true,
-    origin: "http://localhost:5173",
-      
-    
-  }
-));
-
-app.use(json());
-//. Read cookies 
+app.use(express.json());
 app.use(cookieParser());
 
-
-
 app.use('/articles', articleRoutes);
-
 app.use('/authors', authorRoutes);
-
-app.use ('/users' , userRoutes);
-
-app.use ( '/auth' , authRoutes);
-
-
-
-
-
+app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
 
 main().then(() => console.log("connected")).catch(err => console.log(err));
 
 async function main() {
-  await connect(process.env.DB_URL);
+  await mongoose.connect(process.env.DB_URL);
 }
