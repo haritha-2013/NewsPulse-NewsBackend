@@ -1,15 +1,15 @@
 require('dotenv').config()
 
 
-const mongoose = require('mongoose');
-const express = require('express')
-const cors = require('cors')
-const cookieParser = require('cookie-parser')
+import { connect } from 'mongoose';
+import express, { json } from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
-const articleRoutes = require('./routes/articleRoutes')
-const authorRoutes = require('./routes/authorRoutes')
-const userRoutes = require('./routes/userRoutes')
-const authRoutes = require('./routes/authRoutes')
+import articleRoutes from './routes/articleRoutes';
+import authorRoutes from './routes/authorRoutes';
+import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/authRoutes';
 
 const app = express()
 const port = process.env.PORT || 3000;
@@ -27,7 +27,7 @@ app.use(cors(
   }
 ));
 
-app.use(express.json());
+app.use(json());
 //. Read cookies 
 app.use(cookieParser());
 
@@ -53,5 +53,5 @@ app.listen(port, () => {
 main().then(() => console.log("connected")).catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect(process.env.DB_URL);
+  await connect(process.env.DB_URL);
 }
