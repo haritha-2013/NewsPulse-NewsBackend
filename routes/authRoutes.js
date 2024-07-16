@@ -15,7 +15,7 @@ router.post('/login' , Login);
 
 
 //.3. Route for verify
-router.get ('/verifyLogin' , verifyLogin);
+router.get ('/verify' , verifyLogin);
 
 //.4. Route for logout
 router.get ('/logout' , logout);
