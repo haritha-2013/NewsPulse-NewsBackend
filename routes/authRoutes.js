@@ -8,16 +8,16 @@ const router = express.Router();
 
 
 //. 1. Route for signup
-router.post('/signup' , signup);
+router.post('/signup', signup);
 
 //. 2. Route for Login
-router.post('/login' , Login);
+router.post('/login', Login);
 
 
 //.3. Route for verify
-router.get ('/verify' , verifyLogin);
+router.get ('/verify', verifyLogin);
 
 //.4. Route for logout
-router.get ('/logout' , logout);
+router.get ('/logout', logout);
 
 module.exports = router;
